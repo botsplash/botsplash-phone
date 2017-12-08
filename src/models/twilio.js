@@ -20,7 +20,8 @@ module.exports = {
     let fromNumber = process.env.TWILIO_NUMBER;
     const bodyLen = req.body.text.length;
     if (bodyLen > 10) {
-      const bodyEnd = req.body.text.slice(bodyLen-10, 10);
+      const bodyEnd = req.body.text.slice(bodyLen-10, bodyLen);
+      console.log('bodyEnd:', bodyEnd);
       if (/^\d+$/g.test(bodyEnd)) {
         fromNumber = bodyEnd;
         bodyText = req.body.text.slice(0, bodyLen - 10);
