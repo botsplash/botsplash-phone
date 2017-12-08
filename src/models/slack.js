@@ -48,7 +48,7 @@ module.exports = {
           username: process.env.SLACK_BOT_NAME,
           attachments: [
             {
-              fallback: `from ${req.body.From}: ${req.body.Body}`,
+              fallback: `from ${req.body.From} to ${req.body.To}: ${req.body.Body}`,
               color: '#3D91FC',
               author_name: `Message from ${req.body.From}`,
               title: req.body.Body,
@@ -71,9 +71,9 @@ module.exports = {
               username: process.env.SLACK_BOT_NAME,
               attachments: [
                 {
-                  fallback: `from ${req.body.From}: ${req.body.Body}`,
+                  fallback: `from ${req.body.From} to ${req.body.To}: ${req.body.Body}`,
                   color: '#3D91FC',
-                  author_name: `Message from ${req.body.From}`,
+                  author_name: `Message from ${req.body.From} to ${req.body.To}`,
                   title: req.body.Body,
                   footer: 'powered by Twilio',
                   footer_icon: 'https://media.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAANCAAAAJGU3Yzg3ODY3LTRlMGEtNGRjNy1iMjIzLWRiZDBjZjU4NjgyYQ.png',
