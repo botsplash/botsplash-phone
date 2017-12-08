@@ -11,19 +11,32 @@ const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWI
 
 module.exports = {
   sendToTwilio: (req, res) => {
-    console.log('sendToTwilio:', req.body);
     const messageToSend = req.body.text;
     const numberToSend = req.body.channel_name;
     // pops off the prepended #sms in Slack
     const numberToSendSerialized = numberToSend.slice(3);
+
+    let bodyText = req.body.text;   
+    let fromNumber = process.env.TWILIO_NUMBER;
+    const bodyLen = req.body.text.length;
+    if (bodyLen > 10) {
+      const bodyEnd = req.body.text.slice(bodyLen-10, 10);
+      if (/^\d+$/g.test(bodyEnd)) {
+        fromNumber = bodyEnd;
+        bodyText = req.body.text.slice(0, bodyLen - 10);
+      }
+    }
+    console.log('sendToTwilio:', fromNumber, 'body:', bodyText);
+
     client.messages.create({
       to: numberToSendSerialized,
-      from: process.env.TWILIO_NUMBER,
-      body: messageToSend,
+      from: fromNumber,
+      body: bodyText,
     },
       (error) => {
         if (error) {
           res.send('Error: unable to send message');
+          console.log('Error: unable to send message:', error);
         }
       }
     );
@@ -34,7 +47,7 @@ module.exports = {
         channel: `#${req.body.channel_name}`,
         username: req.body.user_name,
         icon_emoji: ':boom:',
-        text: req.body.text,
+        text: `${bodyText} from ${fromNumber}`,
       },
       () => { }
     );
