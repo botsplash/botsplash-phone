@@ -83,7 +83,7 @@ module.exports = {
           channel: '#twilio',
           username: req.body.user_name,
           icon_emoji: ':boom:',
-          text: `Error sending message: ${result.error || 'Uknonwn'}: \`\`\`${bodyText}\`\`\``,
+          text: `Error sending message: ${result.error || 'Uknonwn'}: \`\`\`/twilio ${bodyText}\`\`\``,
         },
         () => { }
       );
