@@ -66,15 +66,15 @@ module.exports = {
       );
 
       // Post SMS message to Slack to show running conversation thread
-      slack.webhook(
-        {
-          channel: '#twilio',
-          username: req.body.user_name,
-          icon_emoji: ':boom:',
-          text: `Sent message from ${result.fromNumber} to ${result.toNumber}: \`\`\`${result.message}\`\`\``,
-        },
-        () => { }
-      );
+      // slack.webhook(
+      //   {
+      //     channel: '#twilio',
+      //     username: req.body.user_name,
+      //     icon_emoji: ':boom:',
+      //     text: `Sent message from ${result.fromNumber} to ${result.toNumber}: \`\`\`${result.message}\`\`\``,
+      //   },
+      //   () => { }
+      // );
 
       res.status(200).send('Message sent successfully.');
     } else {
