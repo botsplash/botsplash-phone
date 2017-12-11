@@ -9,7 +9,8 @@ slack.setWebhook(webhookUri);
 // initializes Twilio
 const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-function parseMessage(body) {
+function parseMessage(bodyText) {
+  const body = bodyText.replace(/\+1/gi, '');
   if (body.length < 22) {
     return {
       success: false,
