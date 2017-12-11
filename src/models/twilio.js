@@ -74,19 +74,22 @@ module.exports = {
         },
         () => { }
       );
+
+      res.status(200).send('Message sent successfully.');
     } else {
       slack.webhook(
         {
           channel: '#twilio',
           username: req.body.user_name,
           icon_emoji: ':boom:',
-          text: `Error occurred sending message: ${result.error || 'Uknonwn'}: \`\`\`${bodyText}\`\`\``,
+          text: `Error sending message: ${result.error || 'Uknonwn'}: \`\`\`${bodyText}\`\`\``,
         },
         () => { }
       );
+
+      res.status(200).send(`Error sending message: ${result.error || 'Uknonwn'}`);
     }
 
-    res.status(200).send('Message sent successfully.');
     res.end();
   },
 };
