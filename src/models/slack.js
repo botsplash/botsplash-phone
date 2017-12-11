@@ -35,10 +35,6 @@ function validChannel(channelToCheck) {
 
 module.exports = {
   sendToSlack: (req, res) => {
-    let usersNumber = req.body.From;
-    // chop off pre-pended + in the number
-    usersNumber = usersNumber.slice(1);
-
     // continues conversations in same channels, if they exist
     if (validChannel('#twilio')) {
       slack.webhook(
@@ -50,10 +46,8 @@ module.exports = {
             {
               fallback: `from ${req.body.From} to ${req.body.To}: ${req.body.Body}`,
               color: '#3D91FC',
-              author_name: `Message from ${req.body.From}`,
+              author_name: `Recieved message from ${req.body.From} to ${req.body.To}`,
               title: req.body.Body,
-              footer: 'powered by Twilio',
-              footer_icon: 'https://media.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAANCAAAAJGU3Yzg3ODY3LTRlMGEtNGRjNy1iMjIzLWRiZDBjZjU4NjgyYQ.png',
             },
           ],
         }, () => { }
@@ -61,22 +55,20 @@ module.exports = {
     } else {
       // creates a new channel for new incoming numbers
       slack.api('channels.create', {
-        name: `sms${usersNumber}`,
+        name: '#twilio',
       }, (err, response) => {
         if (response) {
           slack.webhook(
             {
-              channel: `#sms${usersNumber}`,
+              channel: '#twilio',
               icon_emoji: ':speech_balloon:',
               username: process.env.SLACK_BOT_NAME,
               attachments: [
                 {
                   fallback: `from ${req.body.From} to ${req.body.To}: ${req.body.Body}`,
                   color: '#3D91FC',
-                  author_name: `Message from ${req.body.From} to ${req.body.To}`,
+                  author_name: `Recieved message from ${req.body.From} to ${req.body.To}`,
                   title: req.body.Body,
-                  footer: 'powered by Twilio',
-                  footer_icon: 'https://media.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAANCAAAAJGU3Yzg3ODY3LTRlMGEtNGRjNy1iMjIzLWRiZDBjZjU4NjgyYQ.png',
                 },
               ],
             }, () => { }
