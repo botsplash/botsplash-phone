@@ -9,49 +9,83 @@ slack.setWebhook(webhookUri);
 // initializes Twilio
 const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
+function parseMessage(body) {
+  if (body.length < 22) {
+    return {
+      success: false,
+      error: 'Message to short'
+    };
+  }
+
+  const fromNumber = body.slice(0, 10);
+  console.log('fromNumber:test:', fromNumber);
+  if (!(/^\d+$/g.test(fromNumber))) {
+    return {
+      success: false,
+      error: 'Invalid FROM phone number.  It should be START of the message'
+    }
+  }
+
+  const toNumber = body.slice(11, 21);
+  console.log('toNumber:test:', toNumber);
+  if (!(/^\d+$/g.test(toNumber))) {
+    return {
+      success: false,
+      error: 'Invalid TO phone number.  It should be after FROM number in the message'
+    }
+  }
+
+  const message = body.slice(21);
+
+  return {
+    success: true,
+    fromNumber,
+    toNumber,
+    message
+  };
+}
+
 module.exports = {
   sendToTwilio: (req, res) => {
-    const messageToSend = req.body.text;
-    const numberToSend = req.body.channel_name;
-    // pops off the prepended #sms in Slack
-    const numberToSendSerialized = numberToSend.slice(3);
-
-    let bodyText = req.body.text;   
-    let fromNumber = process.env.TWILIO_NUMBER;
-    const bodyLen = req.body.text.length;
-    if (bodyLen > 10) {
-      const bodyEnd = req.body.text.slice(bodyLen-10, bodyLen);
-      console.log('bodyEnd:', bodyEnd);
-      if (/^\d+$/g.test(bodyEnd)) {
-        fromNumber = bodyEnd;
-        bodyText = req.body.text.slice(0, bodyLen - 10);
-      }
-    }
-    console.log('sendToTwilio:', fromNumber, 'body:', bodyText);
-
-    client.messages.create({
-      to: numberToSendSerialized,
-      from: fromNumber,
-      body: bodyText,
-    },
-      (error) => {
-        if (error) {
-          res.send('Error: unable to send message');
-          console.log('Error: unable to send message:', error);
-        }
-      }
-    );
-
-    // Post SMS message to Slack to show running conversation thread
-    slack.webhook(
-      {
-        channel: `#${req.body.channel_name}`,
-        username: req.body.user_name,
-        icon_emoji: ':boom:',
-        text: `${bodyText} from ${fromNumber}`,
+    const bodyText = req.body.text.trim();
+    const result = parseMessage(bodyText);
+    console.log('sendToTwilio:result:', result);
+    if (result.success) { 
+      client.messages.create({
+        to: result.toNumber,
+        from: result.fromNumber,
+        body: result.message,
       },
-      () => { }
-    );
+        (error) => {
+          if (error) {
+            res.send('Error: unable to send message');
+            console.log('Error: unable to send message:', error);
+          }
+        }
+      );
+
+      // Post SMS message to Slack to show running conversation thread
+      slack.webhook(
+        {
+          channel: '#twilio',
+          username: req.body.user_name,
+          icon_emoji: ':boom:',
+          text: `Sent message from ${result.fromNumber} to ${result.toNumber}: \`\`\`${result.message}\`\`\``,
+        },
+        () => { }
+      );
+    } else {
+      slack.webhook(
+        {
+          channel: '#twilio',
+          username: req.body.user_name,
+          icon_emoji: ':boom:',
+          text: `Error occurred sending message: ${result.error || 'Uknonwn'}: \`\`\`${bodyText}\`\`\``,
+        },
+        () => { }
+      );
+    }
+
     res.status(200).send('Message sent successfully.');
     res.end();
   },
