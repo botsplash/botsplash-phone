@@ -65,7 +65,7 @@ module.exports = {
         }
       );
 
-      Post SMS message to Slack to show running conversation thread
+      // Post SMS message to Slack to show running conversation thread
       slack.webhook(
         {
           channel: '#twilio',
