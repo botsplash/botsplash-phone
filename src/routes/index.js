@@ -3,9 +3,9 @@ const express = require('express');
 const router = express.Router();
 
 const slackAPI = require('../models/slack');
-const twilioAPI = require('../models/twilio');
+const messageProviderAPI = require('../models/messageProvider');
 
-router.post('/twilio', slackAPI.sendToSlack);
-router.post('/slack', twilioAPI.sendToTwilio);
+router.post('/sms', slackAPI.sendToSlack);
+router.post('/slack', messageProviderAPI.sendToProvider);
 
 module.exports = router;

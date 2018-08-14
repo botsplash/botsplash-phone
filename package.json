@@ -27,6 +27,7 @@
     "dotenv": "^4.0.0",
     "error-handler": "^1.0.0",
     "express": "^4.15.2",
+    "node-bandwidth": "^2.6.5",
     "slack-node": "^0.2.0",
     "twilio": "^2.9.0",
     "xml": "^1.0.1"

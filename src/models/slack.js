@@ -3,6 +3,7 @@ const xml = require('xml');
 
 const webhookUri = process.env.SLACK_WEBHOOK_URI;
 const apiToken = process.env.SLACK_API_TOKEN;
+
 const slack = new SlackAPIWrapper(apiToken);
 slack.setWebhook(webhookUri);
 
@@ -35,42 +36,74 @@ function validChannel(channelToCheck) {
 
 module.exports = {
   sendToSlack: (req, res) => {
+    const from = req.body.From || req.body.from;
+    const to = req.body.To || req.body.to;
+    const body = req.body.Body || req.body.text;
+
+    let imageAttachments = [];
+    if (req.body.media) {
+      imageAttachments = req.body.media.map(media => ({ title: media, image_url: media }));
+    } else if (req.body.NumMedia) {
+      const numMedia = req.body.NumMedia;
+      if (numMedia > 0) {
+        for (var i = 0; i < numMedia; i++) {
+          imageAttachments.push({
+            title       : req.body[`MediaUrl${i}`],
+            image_url   : req.body[`MediaUrl${i}`]
+          });
+        }
+      }
+    }
+
     // continues conversations in same channels, if they exist
-    if (validChannel('#twilio')) {
+    console.log({
+      channel: '#messaging',
+      icon_emoji: ':speech_balloon:',
+      username: process.env.SLACK_BOT_NAME,
+      attachments: [
+        {
+          fallback: `from ${from} to ${to}: ${body}`,
+          color: '#3D91FC',
+          author_name: `Recieved message from ${from} to ${to}`,
+          title: body
+        },
+      ].concat(imageAttachments)
+    });
+    if (validChannel('#messaging')) {    
       slack.webhook(
         {
-          channel: '#twilio',
+          channel: '#messaging',
           icon_emoji: ':speech_balloon:',
           username: process.env.SLACK_BOT_NAME,
           attachments: [
             {
-              fallback: `from ${req.body.From} to ${req.body.To}: ${req.body.Body}`,
+              fallback: `from ${from} to ${to}: ${body}`,
               color: '#3D91FC',
-              author_name: `Recieved message from ${req.body.From} to ${req.body.To}`,
-              title: req.body.Body,
+              author_name: `Recieved message from ${from} to ${to}`,
+              title: body
             },
-          ],
+          ].concat(imageAttachments),
         }, () => { }
       );
     } else {
       // creates a new channel for new incoming numbers
       slack.api('channels.create', {
-        name: '#twilio',
+        name: '#messaging',
       }, (err, response) => {
         if (response) {
           slack.webhook(
             {
-              channel: '#twilio',
+              channel: '#messaging',
               icon_emoji: ':speech_balloon:',
               username: process.env.SLACK_BOT_NAME,
               attachments: [
                 {
-                  fallback: `from ${req.body.From} to ${req.body.To}: ${req.body.Body}`,
+                  fallback: `from ${from} to ${to}: ${body}`,
                   color: '#3D91FC',
-                  author_name: `Recieved message from ${req.body.From} to ${req.body.To}`,
-                  title: req.body.Body,
+                  author_name: `Recieved message from ${from} to ${to}`,
+                  title: body,
                 },
-              ],
+              ].concat(imageAttachments),
             }, () => { }
           );
         }
