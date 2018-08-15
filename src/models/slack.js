@@ -24,7 +24,6 @@ function channelExists(name, listOfChannels) {
  */
 function validChannel(channelToCheck) {
   slack.api('channels.list', (error, response) => {
-    console.log(response);
     const activeChannels = response.channels;
     this.channels = [];
     activeChannels.forEach(function add(channel) {
@@ -57,19 +56,6 @@ module.exports = {
     }
 
     // continues conversations in same channels, if they exist
-    console.log({
-      channel: '#messaging',
-      icon_emoji: ':speech_balloon:',
-      username: process.env.SLACK_BOT_NAME,
-      attachments: [
-        {
-          fallback: `from ${from} to ${to}: ${body}`,
-          color: '#3D91FC',
-          author_name: `Recieved message from ${from} to ${to}`,
-          title: body
-        },
-      ].concat(imageAttachments)
-    });
     if (validChannel('#messaging')) {    
       slack.webhook(
         {
