@@ -56,7 +56,7 @@ module.exports = {
     }
 
     // continues conversations in same channels, if they exist
-    if (validChannel('#messaging')) {    
+    if (validChannel('#messaging')) {
       slack.webhook(
         {
           channel: '#messaging',
@@ -66,7 +66,7 @@ module.exports = {
             {
               fallback: `from ${from} to ${to}: ${body}`,
               color: '#3D91FC',
-              author_name: `Recieved message from ${from} to ${to}`,
+              author_name: `Received message from ${from} to ${to}`,
               title: body
             },
           ].concat(imageAttachments),
@@ -87,7 +87,7 @@ module.exports = {
                 {
                   fallback: `from ${from} to ${to}: ${body}`,
                   color: '#3D91FC',
-                  author_name: `Recieved message from ${from} to ${to}`,
+                  author_name: `Received message from ${from} to ${to}`,
                   title: body,
                 },
               ].concat(imageAttachments),
