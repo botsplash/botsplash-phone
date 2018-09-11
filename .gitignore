@@ -4,3 +4,4 @@ node_modules/
 *.idea
 .env
 .coveralls.yml
+package-lock.json

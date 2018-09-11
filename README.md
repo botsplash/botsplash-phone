@@ -1,17 +1,30 @@
 # slackSMS 💬
 
-[![dependencies Status](https://david-dm.org/ammaristotle/slackSMS/status.svg)](https://david-dm.org/ammaristotle/slackSMS)
-[![devDependencies Status](https://david-dm.org/ammaristotle/slackSMS/dev-status.svg)](https://david-dm.org/ammaristotle/slackSMS?type=dev)
-### A client to interface between Twilio and Slack
-Receive SMS messages at your Twilio number in Slack and reply to them from Slack. Built with Node.js and deploy immediately to Heroku.
+[![dependencies Status](https://david-dm.org/botsplash/slackSMS/status.svg)](https://david-dm.org/botsplash/slackSMS)
+[![devDependencies Status](https://david-dm.org/botsplash/slackSMS/dev-status.svg)](https://david-dm.org/botsplash/slackSMS?type=dev)
 
-### Why does this matter? / Motivations
-Text messaging has considerably higher yield than email. It is direct and a fast way to reach people. Using your Twilio number to communicate with friends, clients, customers, etc. through Slack makes this seamless. You can quickly receive inquiries and reply to them.
+**Original Repo for fixed Twilio Phone Number: [https://github.com/ammaristotle/slackSMS](https://github.com/ammaristotle/slackSMS)**
+
+## Slack client to Send or Receive SMS messages.
+
+### Features
+- Send or Receive Message from **Bandwidth** and **Twilio**
+- Support Multiple phone numbers that belong to your account
+- Support Multi-media messages
+- Deploy to Heroku or Docker included (from **ammaristotle** repo)
+
+
+### Why we built this:
+At botsplash, we build messaging tools and needed a simple interface for our developers and testers to validate SMS messages across different providers.
 
 ### Screenshots
-Incoming messages look pretty! ![alt text](https://dl.dropboxusercontent.com/s/01zx3z1hxc6zgn1/Screen%20Shot%202016-09-20%20at%201.26.10%20AM.png "Wooooah!")
+Incoming messages from Bandwidth, look pretty! ![alt text](https://cdn-images-1.medium.com/max/1600/1*4E1v75CUZxMjFGxU1aZbUQ.png)
 
-Reply using quick /twilio command! ![alt text](https://dl.dropboxusercontent.com/s/chnfaadfa11c9vm/Screen%20Shot%202016-09-20%20at%201.29.31%20AM.png "Nifty, mom!")
+Reply using quick /sms command!
+```
+/sms [bandwidth|twilio] [fromNumber] [toNumber] [message]
+```
+![alt text](https://cdn-images-1.medium.com/max/1600/1*yD2XVsJ-JcTaqMW2T44BsQ.png)
 
 ## Requirements
 * slackSMS requires some setup (auth tokens and the like) but then can be configured easily and deployed very fast on Heroku or others
@@ -20,7 +33,7 @@ Reply using quick /twilio command! ![alt text](https://dl.dropboxusercontent.com
 * If you're interested in customizing slackSMS, just clone the repo:
 
   ```bash
-  $ git clone https://github.com/ammaristotle/slackSMS
+  $ git clone https://github.com/botsplash/slackSMS
   $ npm install
   ```
 * You'll then have to complete steps 1-4 below and copy the configuration variables to a `.env` file (using `.env.example` as a guide). Then:
@@ -30,10 +43,10 @@ Reply using quick /twilio command! ![alt text](https://dl.dropboxusercontent.com
   ```
   * (Optional) Learn how to customize the way [messages appear in Slack](https://api.slack.com/docs/message-attachments)
 
-## Get started (fast configuration)
-1. [Purchase a number](https://www.twilio.com/console/phone-numbers/search) from Twilio if you haven't already
+## Get started for Bandwidth or Twilio
+1. Purchase phone number - [Bandwidth](https://app.bandwidth.com/numbers/order) or [Twilio](https://www.twilio.com/console/phone-numbers/search) from Twilio if you haven't already
 
-2. Retrieve your `accountSid` and `auth token` for Twilio [here](https://www.twilio.com/console)
+2. Retrieve your `accountSid` and `auth token` for [Bandwidth](https://app.bandwidth.com/account/profile) or  [Twilio](https://www.twilio.com/console)
 ![alt text](https://dl.dropboxusercontent.com/s/ew2vthkmgq88d41/Screen%20Shot%202016-08-31%20at%201.03.50%20PM.png?dl=0 "Copy these")
 
 3. Get an auth token from Slack. Get one quickly [here](https://api.slack.com/docs/oauth-test-tokens)
@@ -45,25 +58,13 @@ Reply using quick /twilio command! ![alt text](https://dl.dropboxusercontent.com
 6. Now we'll link our Slack webhook to a slash command. Set up a new [slash command](https://slack.com/apps/A0F82E8CA-slash-commands). Then click "Add Configuration". You can make the command name anything you like. Make sure to replace `your-heroku-url` with your app's URL and the endpoint `api/slack` as a **POST** request
 ![alt text](https://dl.dropboxusercontent.com/s/lqs8rkeqx1cnqr9/Screen%20Shot%202016-08-31%20at%2012.51.05%20PM.png?dl=0 "Set it up")
 
-7. Go to your [managed numbers console](https://www.twilio.com/console/phone-numbers/incoming) and click the number you just purchased. Make sure to replace `your-heroku-url` with your app's URL and the endpoint `api/twilio` as a **POST** request
+7. Go to your managed numbers console [Bandwidth](https://app.bandwidth.com/applications/manage) or [Twilio](https://www.twilio.com/console/phone-numbers/incoming) and click the number you just purchased. Make sure to replace `your-heroku-url` with your app's URL and the endpoint `api/twilio` as a **POST** request
 ![alt text](https://dl.dropboxusercontent.com/s/oqalaj2bs82hy2l/Screen%20Shot%202016-08-31%20at%2012.56.15%20PM.png "Twilio console")
 
 8. Start sending messages!
 
-### Docker instructions
-The app is located on Docker's registry as [`ammaristotle/slacksms`](https://hub.docker.com/r/ammaristotle/slacksms/)
-
-It's ready to run using the supplied `Dockerfile` standalone. Depending on your host, you'll have additional setup on your domain, so make sure to use that instead of the heroku url. The endpoints are still the same. For local builds (assuming you've done steps 1-4 below and created a `.env` based off of `.env.example`):
-
-```bash
-$ docker build -t slacksms .
-$ docker run -p 4000:80 slacksms
-```
-
-This app is also ready for a compose workflow. See a sample [here](docker-compose-sample.yml).
-
 #### Costs
-The underlying code for slackSMS is free and open source. However, Twilio charges $.0075 to receive a message and $.0075 to send a message (about 1 cent each). Keep this in mind in case you plan on receiving 20 gazillion messages; that could cause a firestorm in your wallet.
+The underlying code for slackSMS is free and open source. However, Bandwidth is free to receive messages and $.0005 to send a message. Twilio charges $.0075 to receive a message and $.0075 to send a message (about 1 cent each). Keep this in mind in case you plan on receiving 20 gazillion messages; that could cause a firestorm in your wallet.
 
 ##### Contributing / Issues
 Contributions are welcome. Please raise issues as they arise.

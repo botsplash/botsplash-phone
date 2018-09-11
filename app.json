@@ -16,6 +16,18 @@
 			"description": "Issued by Slack to authenticate requests",
 			"required": true
 		},
+		"BANDWIDTH_USER_ID": {
+			"description": "Used by Bandwidth to identify apps as a username",
+			"required": true
+		},
+		"BANDWIDTH_API_TOKEN": {
+			"description": "Issued by Bandwidth to authenticate requests",
+			"required": true
+		},
+		"BANDWIDTH_API_SECRET": {
+			"description": "Your Bandwidth to authenticate requests",
+			"required": true
+		},
 		"TWILIO_ACCOUNT_SID": {
 			"description": "Used by Twilio to identify apps as a username",
 			"required": true
