@@ -24,7 +24,7 @@ function channelExists(name, listOfChannels) {
  */
 function validChannel(channelToCheck) {
   slack.api('channels.list', (error, response) => {
-    const activeChannels = response.channels;
+    const activeChannels = response.channels || [];
     this.channels = [];
     activeChannels.forEach(function add(channel) {
       this.channels.push(channel.name);
