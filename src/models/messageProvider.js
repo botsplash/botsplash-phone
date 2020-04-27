@@ -15,7 +15,13 @@ const bandwidthClient = new Bandwidth({
   apiSecret : process.env.BANDWIDTH_API_SECRET
 });
 
-const providers = ['twilio', 'bandwidth'];
+const bandwidthV2Client = new Bandwidth({
+  userId    : process.env.BANDWIDTH_V2_USER_ID,
+  apiToken  : process.env.BANDWIDTH_V2_API_TOKEN,
+  apiSecret : process.env.BANDWIDTH_V2_API_SECRET
+});
+
+const providers = ['twilio', 'bandwidth', 'bandwidthv2'];
 
 function parseMessage(bodyText) {
   const body = bodyText.replace(/\+1/gi, '').split(' ');
@@ -84,6 +90,16 @@ function sendMessage(params) {
         }, params.media ? { media: params.media } : null)
       );
     
+    case 'bandwidthv2':
+      return bandwidthV2Client.v2.Message.send(
+        Object.assign({
+          to: [params.toNumber],
+          from: params.fromNumber,
+          text: params.message,
+          applicationId : process.env.BANDWIDTH_V2_APP_ID
+        }, params.media ? { media: params.media } : null)
+      );
+
     default:
       return new Promise();
   }

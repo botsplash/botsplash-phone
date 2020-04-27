@@ -34,15 +34,38 @@ function validChannel(channelToCheck) {
   });
 }
 
+function getPayload(req) {
+  if (Array.isArray(req.body)) {
+    // bandwidth v2 response
+    const body = req.body[0];
+    if (body.type !== 'message-received') {
+      return;
+    }
+
+    return {
+      body  : body.message.text,
+      from  : body.message.from,
+      to    : body.to,
+      media : body.message.media
+    }
+  }
+
+  return {
+    from  : req.body.From || req.body.from,
+    to    : req.body.To || req.body.to,
+    body  : req.body.Body || req.body.text,
+    media : req.body.media
+  }
+}
+
 module.exports = {
   sendToSlack: (req, res) => {
-    const from = req.body.From || req.body.from;
-    const to = req.body.To || req.body.to;
-    const body = req.body.Body || req.body.text;
+    const payload = getPayload(req);
+    const { from, to, body, media } = payload;
 
     let imageAttachments = [];
-    if (req.body.media) {
-      imageAttachments = req.body.media.map(media => ({ title: media, image_url: media }));
+    if (media) {
+      imageAttachments = media.map(m => ({ title: m, image_url: m }));
     } else if (req.body.NumMedia) {
       const numMedia = req.body.NumMedia;
       if (numMedia > 0) {
