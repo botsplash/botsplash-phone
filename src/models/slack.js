@@ -63,6 +63,7 @@ module.exports = {
     const payload = getPayload(req);
     console.log('sendToSlack:body:', req.body, 'payload:', payload);
     if (!payload) {
+      res.status(200).send('success');
       return;
     }
 
