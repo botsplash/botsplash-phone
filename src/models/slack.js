@@ -61,6 +61,11 @@ function getPayload(req) {
 module.exports = {
   sendToSlack: (req, res) => {
     const payload = getPayload(req);
+
+    if (!payload) {
+      return;
+    }
+
     const { from, to, body, media } = payload;
 
     let imageAttachments = [];
