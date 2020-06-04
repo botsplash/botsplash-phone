@@ -42,8 +42,6 @@ function getPayload(req) {
       return;
     }
 
-    console.log('this...', body.message.to);
-
     return {
       body  : body.message.text,
       from  : body.message.from,
