@@ -35,6 +35,8 @@ function validChannel(channelToCheck) {
 }
 
 function getPayload(req) {
+
+  console.log('this...', req.body);
   if (Array.isArray(req.body)) {
     // bandwidth v2 response
     const body = req.body[0];
