@@ -35,13 +35,14 @@ function validChannel(channelToCheck) {
 }
 
 function getPayload(req) {
-  console.log('this...', req.body);
   if (Array.isArray(req.body)) {
     // bandwidth v2 response
     const body = req.body[0];
     if (body.type !== 'message-received') {
       return;
     }
+
+    console.log('this...', body.message.to);
 
     return {
       body  : body.message.text,
@@ -62,6 +63,15 @@ function getPayload(req) {
 module.exports = {
   sendToSlack: (req, res) => {
     const payload = getPayload(req);
+
+    if (!payload) {
+       // Send back Twilio an empty XML response to let them know we got the message
+      res.writeHead(200, { 'Content-Type': 'text/xml' });
+      const twiml = [{ Response: '' }];
+      res.end(xml(twiml));
+      return;
+    }
+
     const { from, to, body, media } = payload;
 
     let imageAttachments = [];
