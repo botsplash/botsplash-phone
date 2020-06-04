@@ -80,7 +80,7 @@ function sendMessage(params) {
           body: params.message,
         }, params.media ? { mediaUrl: params.media } : null)
       );
-    
+
     case 'bandwidth':
       return bandwidthClient.Message.send(
         Object.assign({
@@ -89,7 +89,7 @@ function sendMessage(params) {
           text: params.message
         }, params.media ? { media: params.media } : null)
       );
-    
+
     case 'bandwidthv2':
       return bandwidthV2Client.v2.Message.send(
         Object.assign({
@@ -121,7 +121,7 @@ module.exports = {
   sendToProvider: (req, res) => {
     const bodyText = req.body.text.trim();
     const result = parseMessage(bodyText);
-    console.log('sendSMSresult:', result);
+    console.log('sendSMSresult:body:', req.body, 'result:', result);
     if (result.success) {
       sendMessage(result)
       .catch((error) => {

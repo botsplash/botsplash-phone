@@ -61,7 +61,7 @@ function getPayload(req) {
 module.exports = {
   sendToSlack: (req, res) => {
     const payload = getPayload(req);
-
+    console.log('sendToSlack:body:', req.body, 'payload:', payload);
     if (!payload) {
       return;
     }
